@@ -171,6 +171,72 @@ body {
 .confetti { position:fixed; border-radius:2px; animation:fall linear forwards; pointer-events:none; z-index:9999; }
 @keyframes fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(110vh) rotate(720deg);opacity:0} }
 
+/* =============================================
+   이름 입력 화면
+   ============================================= */
+#screen-name { background:linear-gradient(155deg,#FFF0E0,#E0F7FA); }
+.name-card {
+  background:#fff; border-radius:32px; box-shadow:var(--shadow);
+  padding:44px 36px; text-align:center; max-width:420px; width:100%;
+}
+.name-title { font-size:2rem; font-weight:900; margin-bottom:8px; }
+.name-sub   { font-size:.95rem; color:var(--mid); margin-bottom:28px; line-height:1.6; }
+.name-input {
+  width:100%; padding:16px 20px; border-radius:16px;
+  border:3px solid #E0E0E0; font-size:1.5rem; font-weight:800;
+  text-align:center; outline:none; transition:border-color .2s;
+  font-family:inherit; margin-bottom:20px;
+}
+.name-input:focus { border-color:var(--teal); }
+.name-input::placeholder { color:#CCC; font-weight:400; }
+.btn-name-go {
+  width:100%; padding:16px; border-radius:50px; border:none;
+  background:linear-gradient(135deg,var(--teal),var(--blue)); color:#fff;
+  font-size:1.15rem; font-weight:900; cursor:pointer;
+  box-shadow:0 4px 16px rgba(78,205,196,.35); transition:transform .16s, box-shadow .16s;
+}
+.btn-name-go:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 8px 24px rgba(78,205,196,.5); }
+.btn-name-go:disabled { background:#CCC; cursor:not-allowed; box-shadow:none; }
+
+/* =============================================
+   랭킹 화면
+   ============================================= */
+#screen-rank { background:linear-gradient(155deg,#FFF9E0,#E8F4FD); }
+.rank-card {
+  background:#fff; border-radius:32px; box-shadow:var(--shadow);
+  padding:36px 28px; max-width:480px; width:100%;
+}
+.rank-title { font-size:1.8rem; font-weight:900; text-align:center; margin-bottom:6px; }
+.rank-sub   { font-size:.88rem; color:var(--mid); text-align:center; margin-bottom:20px; }
+.rank-tabs  { display:flex; gap:8px; margin-bottom:16px; justify-content:center; }
+.rank-tab {
+  padding:7px 20px; border-radius:50px; border:2px solid #E0E0E0;
+  background:#fff; font-size:.88rem; font-weight:800; cursor:pointer; transition:.15s;
+}
+.rank-tab.active-c { background:#FFE5E5; border-color:var(--red); color:var(--red); }
+.rank-tab.active-v { background:#E0F7FA; border-color:var(--teal); color:var(--teal); }
+.rank-list  { list-style:none; display:flex; flex-direction:column; gap:8px; max-height:360px; overflow-y:auto; }
+.rank-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; border-radius:14px; background:#F9F9F9;
+  animation:fadeUp .3s ease;
+}
+.rank-item.me { background:#FFF9E0; border:2px solid var(--yellow); }
+.rank-no   { font-size:1.3rem; font-weight:900; width:32px; text-align:center; flex-shrink:0; }
+.rank-name { flex:1; font-size:1rem; font-weight:700; }
+.rank-mode { font-size:.75rem; color:var(--mid); margin-left:4px; }
+.rank-score{ font-size:1.1rem; font-weight:900; color:var(--red); }
+.rank-empty { text-align:center; color:var(--mid); padding:32px; font-size:.95rem; }
+.rank-loading { text-align:center; color:var(--mid); padding:24px; }
+.r-btns-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+.btn-rank {
+  padding:12px 28px; border-radius:50px; border:none;
+  background:linear-gradient(135deg,var(--yellow),var(--orange)); color:var(--dark);
+  font-size:.95rem; font-weight:900; cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.1); transition:transform .16s;
+}
+.btn-rank:hover { transform:translateY(-3px); }
+
 /* 반응형 */
 @media(max-width:480px){
   .word-card{padding:20px 18px}
@@ -178,14 +244,28 @@ body {
   .main-cards{flex-direction:column;align-items:center}
   .mode-card{width:88vw}
   .result-card{padding:28px 16px}
+  .rank-card{padding:24px 16px}
   .choices{gap:8px}
 }
   </style>
 </head>
 <body>
 
+<!-- ========== 이름 입력 화면 ========== -->
+<div id="screen-name" class="screen active">
+  <div class="name-card">
+    <div style="font-size:3.5rem;margin-bottom:12px">✏️</div>
+    <div class="name-title">이름을 입력해요!</div>
+    <p class="name-sub">내 점수가 랭킹에 올라가요! 🏆<br>친구들과 실력을 겨뤄봐요!</p>
+    <input class="name-input" id="name-input" type="text" placeholder="예) 김민준" maxlength="6"
+      oninput="document.getElementById('btn-name-go').disabled=this.value.trim().length===0"
+      onkeydown="if(event.key==='Enter')goToMain()" />
+    <button class="btn-name-go" id="btn-name-go" onclick="goToMain()" disabled>시작하기 🚀</button>
+  </div>
+</div>
+
 <!-- ========== 메인 화면 ========== -->
-<div id="screen-main" class="screen active">
+<div id="screen-main" class="screen">
   <div class="main-header">
     <h1 class="main-title"><span class="cr">자</span>·<span class="ct">모</span>음<br>복습 게임</h1>
     <p class="main-sub">낱말 속 자음·모음을 찾아봐요! 🔍</p>
@@ -250,17 +330,85 @@ body {
     <div  class="r-stars"   id="r-stars">⭐⭐⭐</div>
     <div  class="r-score"   id="r-score">100<span>/100점</span></div>
     <p    class="r-comment" id="r-comment"></p>
+    <div id="r-player-name" style="font-size:1rem;color:var(--mid);margin-bottom:4px;"></div>
     <div class="r-btns">
+      <button class="btn-retry" onclick="retryGame()">다시 도전! 🔄</button>
+      <button class="btn-rank"  onclick="showRank()">🏆 랭킹 보기</button>
+      <button class="btn-home"  onclick="goHome()">처음으로 🏠</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 랭킹 화면 ========== -->
+<div id="screen-rank" class="screen">
+  <div class="rank-card">
+    <div style="font-size:3rem;text-align:center;margin-bottom:8px">🏆</div>
+    <div class="rank-title">명예의 전당</div>
+    <p class="rank-sub">우리 반 최고 기록이에요! 🌟</p>
+    <div class="rank-tabs">
+      <button class="rank-tab active-c" id="tab-c" onclick="switchTab('consonant')">🔵 자음 랭킹</button>
+      <button class="rank-tab" id="tab-v" onclick="switchTab('vowel')">🟢 모음 랭킹</button>
+    </div>
+    <ul class="rank-list" id="rank-list">
+      <li class="rank-loading">불러오는 중... ⏳</li>
+    </ul>
+    <div class="r-btns-row">
       <button class="btn-retry" onclick="retryGame()">다시 도전! 🔄</button>
       <button class="btn-home"  onclick="goHome()">처음으로 🏠</button>
     </div>
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, push, query, orderByChild, limitToLast, onValue }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDbea5uPH6P4QZWKkFBzByKCJeEoT6Wpas",
+  authDomain: "hangul-game.firebaseapp.com",
+  databaseURL: "https://hangul-game-default-rtdb.firebaseio.com",
+  projectId: "hangul-game",
+  storageBucket: "hangul-game.firebasestorage.app",
+  messagingSenderId: "731900667387",
+  appId: "1:731900667387:web:b2ea82c3010abcffb5575e"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db    = getDatabase(fbApp);
+
+// 점수 저장
+window.saveScore = function(name, mode, score) {
+  return push(ref(db, 'scores'), {
+    name, mode, score,
+    ts: Date.now()
+  });
+};
+
+// 랭킹 불러오기 (모드별 상위 20개)
+window.loadRanking = function(mode, callback) {
+  const q = query(
+    ref(db, 'scores'),
+    orderByChild('score'),
+    limitToLast(100)
+  );
+  onValue(q, snap => {
+    const rows = [];
+    snap.forEach(child => {
+      const d = child.val();
+      if(d.mode === mode) rows.push(d);
+    });
+    // 점수 내림차순 정렬 후 상위 20개
+    rows.sort((a,b) => b.score - a.score);
+    callback(rows.slice(0,20));
+  });
+};
+</script>
+
 <script>
 'use strict';
 // =============================================
-//  한글 자모음 복습 게임 v2.0
+//  한글 자모음 복습 게임 v3.0 (Firebase 랭킹)
 //  - 자음: 기본 14 + 쌍자음 5 = 19개
 //  - 모음: 단모음 10 + 복합모음 11 = 21개
 //  - 단어: 받침 없는 낱말 200+개
@@ -415,11 +563,22 @@ function makeChoices(correct, pool, total=6) {
 
 /* ── 게임 상태 ─────────────────────────────── */
 let G = { mode:'consonant', questions:[], idx:0, score:0, selected:new Set(), answered:false, choices:[], total:10 };
+let playerName = '';
+let rankTab    = 'consonant';
 
 /* ── 화면 전환 ─────────────────────────────── */
 function show(id) {
-  ['screen-main','screen-game','screen-result'].forEach(s=>document.getElementById(s).classList.remove('active'));
+  ['screen-name','screen-main','screen-game','screen-result','screen-rank']
+    .forEach(s=>document.getElementById(s).classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+
+/* ── 이름 입력 → 메인으로 ─────────────────── */
+function goToMain() {
+  const val = document.getElementById('name-input').value.trim();
+  if(!val) return;
+  playerName = val;
+  show('screen-main');
 }
 
 /* ── 게임 시작 ─────────────────────────────── */
@@ -528,8 +687,14 @@ function showResult() {
   document.getElementById('r-stars').textContent=st;
   document.getElementById('r-score').innerHTML=`${G.score}<span> / ${G.total*10}점</span>`;
   document.getElementById('r-comment').textContent=co;
+  document.getElementById('r-player-name').textContent=`${playerName}의 점수`;
   show('screen-result');
   if(pct>=60) confetti(60);
+  // Firebase에 점수 저장
+  if(playerName && typeof window.saveScore==='function') {
+    window.saveScore(playerName, G.mode, G.score)
+      .catch(e=>console.warn('점수 저장 실패:', e));
+  }
 }
 
 /* ── 재도전·홈 ─────────────────────────────── */
@@ -539,6 +704,49 @@ function goHome(){
     if(!confirm('처음 화면으로 돌아갈까요?')) return;
   }
   show('screen-main');
+}
+
+/* ── 랭킹 화면 ─────────────────────────────── */
+function showRank() {
+  rankTab = G.mode;
+  show('screen-rank');
+  updateRankTabs();
+  fetchRank();
+}
+
+function switchTab(mode) {
+  rankTab = mode;
+  updateRankTabs();
+  fetchRank();
+}
+
+function updateRankTabs() {
+  document.getElementById('tab-c').className = 'rank-tab' + (rankTab==='consonant'?' active-c':'');
+  document.getElementById('tab-v').className = 'rank-tab' + (rankTab==='vowel'?' active-v':'');
+}
+
+function fetchRank() {
+  const list = document.getElementById('rank-list');
+  list.innerHTML = '<li class="rank-loading">불러오는 중... ⏳</li>';
+  if(typeof window.loadRanking !== 'function') {
+    list.innerHTML = '<li class="rank-empty">❌ Firebase 연결 중...</li>'; return;
+  }
+  window.loadRanking(rankTab, rows => {
+    if(rows.length === 0) {
+      list.innerHTML = '<li class="rank-empty">아직 기록이 없어요!<br>첫 번째 도전자가 되어봐요 🌟</li>';
+      return;
+    }
+    const medals = ['🥇','🥈','🥉'];
+    list.innerHTML = rows.map((r,i) => {
+      const isMe = r.name === playerName;
+      const no   = medals[i] || `${i+1}`;
+      return `<li class="rank-item${isMe?' me':''}">
+        <span class="rank-no">${no}</span>
+        <span class="rank-name">${r.name}${isMe?' 👈 나':''}!</span>
+        <span class="rank-score">${r.score}점</span>
+      </li>`;
+    }).join('');
+  });
 }
 
 /* ── 컨페티 🎉 ─────────────────────────────── */
