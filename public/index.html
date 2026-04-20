@@ -307,6 +307,7 @@ body {
       <button class="class-btn" data-class="5" onclick="selectClass(this)">5반</button>
     </div>
     <button class="btn-name-go" id="btn-name-go" onclick="goToMain()" disabled>시작하기 🚀</button>
+    <button class="btn-preview-rank" style="margin-top:12px;width:100%" onclick="previewRankFromName()">🏆 랭킹 먼저 보기</button>
   </div>
 </div>
 
@@ -798,6 +799,14 @@ function previewRank() {
   _openRank();
 }
 
+// 이름 입력 화면에서 바로 랭킹 보기 (이름 없이도 가능)
+function previewRankFromName() {
+  rankFromMain = 'name'; // 'name' = 이름 입력 화면으로 돌아감
+  rankTab      = 'consonant';
+  rankFilter   = 'all';
+  _openRank();
+}
+
 function _openRank() {
   show('screen-rank');
   // 재도전 버튼: 게임 후에만 표시
@@ -813,8 +822,9 @@ function _openRank() {
 
 // 랭킹에서 돌아가기 (진입 경로에 따라 분기)
 function rankGoBack() {
-  if(rankFromMain) show('screen-main');
-  else show('screen-result');
+  if(rankFromMain === 'name') show('screen-name');
+  else if(rankFromMain)       show('screen-main');
+  else                        show('screen-result');
 }
 
 function switchTab(mode) {
