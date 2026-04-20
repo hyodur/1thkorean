@@ -484,18 +484,32 @@ window.loadRanking = function(mode, classFilter, callback) {
     limitToLast(200)
   );
   onValue(q, snap => {
-    const rows = [];
+    // 1) 전체 수집
+    const all = [];
     snap.forEach(child => {
       const d = child.val();
       if(d.mode !== mode) return;
       if(classFilter !== 'all' && String(d.classNum) !== String(classFilter)) return;
-      rows.push(d);
+      all.push(d);
     });
-    rows.sort((a, b) => {
+
+    // 2) 같은 이름+반 → 최고기록 1개만 남기기
+    //    점수 높은 것 우선, 같은 점수면 시간 짧은 것 우선
+    const best = {};
+    all.forEach(d => {
+      const key = `${d.classNum}_${d.name}`;
+      const prev = best[key];
+      if(!prev) { best[key] = d; return; }
+      const better =
+        d.score > prev.score ||
+        (d.score === prev.score && (d.timeSec ?? 9999) < (prev.timeSec ?? 9999));
+      if(better) best[key] = d;
+    });
+
+    // 3) 정렬 후 상위 20개
+    const rows = Object.values(best).sort((a, b) => {
       if(b.score !== a.score) return b.score - a.score;
-      const ta = a.timeSec ?? 9999;
-      const tb = b.timeSec ?? 9999;
-      return ta - tb;
+      return (a.timeSec ?? 9999) - (b.timeSec ?? 9999);
     });
     callback(rows.slice(0, 20));
   });
