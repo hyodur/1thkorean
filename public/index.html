@@ -174,29 +174,33 @@ body {
 /* =============================================
    이름 입력 화면
    ============================================= */
-#screen-name { background:linear-gradient(155deg,#FFF0E0,#E0F7FA); }
+#screen-name {
+  background:linear-gradient(155deg,#FFF0E0,#E0F7FA);
+  justify-content:flex-start; padding-top:24px; padding-bottom:24px;
+  overflow-y:auto;
+}
 .name-card {
   background:#fff; border-radius:32px; box-shadow:var(--shadow);
-  padding:44px 36px; text-align:center; max-width:420px; width:100%;
+  padding:28px 32px 24px; text-align:center; max-width:420px; width:100%;
 }
-.name-title { font-size:2rem; font-weight:900; margin-bottom:8px; }
-.name-sub   { font-size:.95rem; color:var(--mid); margin-bottom:24px; line-height:1.6; }
+.name-title { font-size:1.8rem; font-weight:900; margin-bottom:6px; }
+.name-sub   { font-size:.9rem; color:var(--mid); margin-bottom:18px; line-height:1.5; }
 .name-input {
-  width:100%; padding:16px 20px; border-radius:16px;
-  border:3px solid #E0E0E0; font-size:1.5rem; font-weight:800;
+  width:100%; padding:13px 18px; border-radius:16px;
+  border:3px solid #E0E0E0; font-size:1.4rem; font-weight:800;
   text-align:center; outline:none; transition:border-color .2s;
-  font-family:inherit; margin-bottom:16px;
+  font-family:inherit; margin-bottom:14px;
 }
 .name-input:focus { border-color:var(--teal); }
 .name-input::placeholder { color:#CCC; font-weight:400; }
 
 /* 반 선택 */
-.class-label { font-size:.9rem; font-weight:700; color:var(--mid); margin-bottom:10px; text-align:left; }
-.class-btns { display:flex; gap:8px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
+.class-label { font-size:.88rem; font-weight:700; color:var(--mid); margin-bottom:8px; text-align:left; }
+.class-btns { display:flex; gap:7px; justify-content:center; margin-bottom:16px; flex-wrap:wrap; }
 .class-btn {
-  width:58px; height:58px; border-radius:16px;
+  width:52px; height:52px; border-radius:14px;
   border:3px solid #E0E0E0; background:#fff;
-  font-size:1.1rem; font-weight:900; cursor:pointer;
+  font-size:1rem; font-weight:900; cursor:pointer;
   transition:transform .13s, border-color .13s, background .13s;
   color:var(--dark);
 }
@@ -292,7 +296,7 @@ body {
 <!-- ========== 이름 입력 화면 ========== -->
 <div id="screen-name" class="screen active">
   <div class="name-card">
-    <div style="font-size:3.5rem;margin-bottom:12px">✏️</div>
+    <div style="font-size:2.8rem;margin-bottom:8px">✏️</div>
     <div class="name-title">이름을 입력해요!</div>
     <p class="name-sub">내 점수가 랭킹에 올라가요! 🏆<br>친구들과 실력을 겨뤄봐요!</p>
     <input class="name-input" id="name-input" type="text" placeholder="예) 김민준" maxlength="6"
