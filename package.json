@@ -1,0 +1,14 @@
+{
+  "name": "hangul-game",
+  "version": "1.0.0",
+  "description": "한글 자모음 복습 게임",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3000"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
