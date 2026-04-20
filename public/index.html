@@ -265,6 +265,16 @@ body {
 }
 .btn-rank:hover { transform:translateY(-3px); }
 
+/* 메인 화면 - 랭킹 미리보기 버튼 */
+.btn-preview-rank {
+  margin-bottom:22px;
+  padding:10px 28px; border-radius:50px; border:2px solid var(--yellow);
+  background:#fff; color:var(--dark);
+  font-size:.95rem; font-weight:900; cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.08); transition:transform .16s, box-shadow .16s;
+}
+.btn-preview-rank:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(255,230,109,.5); background:var(--yellow); }
+
 /* 반응형 */
 @media(max-width:480px){
   .word-card{padding:20px 18px}
@@ -306,6 +316,9 @@ body {
     <h1 class="main-title"><span class="cr">자</span>·<span class="ct">모</span>음<br>복습 게임</h1>
     <p class="main-sub">낱말 속 자음·모음을 찾아봐요! 🔍</p>
   </div>
+  <!-- 랭킹 미리보기 버튼 -->
+  <button class="btn-preview-rank" onclick="previewRank()">🏆 랭킹 보기</button>
+
   <div class="main-cards">
     <button class="mode-card card-c" onclick="startGame('consonant')">
       <span class="card-emoji">🔵</span>
@@ -398,8 +411,8 @@ body {
       <li class="rank-loading">불러오는 중... ⏳</li>
     </ul>
     <div class="r-btns-row">
-      <button class="btn-retry" onclick="retryGame()">다시 도전! 🔄</button>
-      <button class="btn-home"  onclick="goHome()">처음으로 🏠</button>
+      <button class="btn-retry" id="rank-retry-btn" onclick="retryGame()" style="display:none">다시 도전! 🔄</button>
+      <button class="btn-home"  id="rank-back-btn"  onclick="rankGoBack()">← 돌아가기</button>
     </div>
   </div>
 </div>
@@ -609,10 +622,11 @@ function makeChoices(correct, pool, total=6) {
 
 /* ── 게임 상태 ─────────────────────────────── */
 let G = { mode:'consonant', questions:[], idx:0, score:0, selected:new Set(), answered:false, choices:[], total:10 };
-let playerName  = '';
-let playerClass = '';   // 선택된 반 (1~5)
-let rankTab     = 'consonant';
-let rankFilter  = 'all'; // 랭킹 반 필터
+let playerName   = '';
+let playerClass  = '';      // 선택된 반 (1~5)
+let rankTab      = 'consonant';
+let rankFilter   = 'all';   // 랭킹 반 필터
+let rankFromMain = false;   // true = 게임 전 미리보기로 진입
 
 /* ── 화면 전환 ─────────────────────────────── */
 function show(id) {
@@ -768,10 +782,26 @@ function goHome(){
 }
 
 /* ── 랭킹 화면 ─────────────────────────────── */
+// 게임 후 결과에서 진입
 function showRank() {
-  rankTab    = G.mode;
-  rankFilter = 'all';
+  rankFromMain = false;
+  rankTab      = G.mode;
+  rankFilter   = 'all';
+  _openRank();
+}
+
+// 메인에서 게임 전 미리보기로 진입
+function previewRank() {
+  rankFromMain = true;
+  rankTab      = 'consonant';
+  rankFilter   = 'all';
+  _openRank();
+}
+
+function _openRank() {
   show('screen-rank');
+  // 재도전 버튼: 게임 후에만 표시
+  document.getElementById('rank-retry-btn').style.display = rankFromMain ? 'none' : 'inline-block';
   // 반 필터 버튼 초기화
   document.querySelectorAll('.rcf-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.filter === 'all');
@@ -779,6 +809,12 @@ function showRank() {
   updateRankTabs();
   updateRankSub();
   fetchRank();
+}
+
+// 랭킹에서 돌아가기 (진입 경로에 따라 분기)
+function rankGoBack() {
+  if(rankFromMain) show('screen-main');
+  else show('screen-result');
 }
 
 function switchTab(mode) {
